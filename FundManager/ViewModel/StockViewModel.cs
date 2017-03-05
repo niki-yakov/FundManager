@@ -109,13 +109,16 @@ namespace FundManager.ViewModel
         {
             var stockType = new List<StockTypeModel>(await _stockTypeRepository.GetAllStockTypes());
 
-            AddStockCommnad = new RelayCommand(o => AddStockMethod(), o => true);
+            AddStockCommnad = new RelayCommand(o => AddStockMethod(), o => true); 
 
             AddStock = new AddStockViewModel(AddStockCommnad) { StockType = stockType };
         }
 
         async private void AddStockMethod()
         {
+            if (AddStock.Price < 1 || AddStock.Quantity < 1 || (AddStock.Name?.Length ?? 0) == 0)
+                return;
+
             var stock = await _stockRepository.AddStock(AddStock.Selected.Type, AddStock.Price, AddStock.Quantity, AddStock.NextOccurence);
 
             GetAllStockCommand.Execute(null);
